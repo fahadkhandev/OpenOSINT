@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/static/(.*)",
+      "destination": "/openosint/web/static/$1"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/openosint/web/index.html"
+    }
+  ]
+}

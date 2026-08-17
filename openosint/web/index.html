@@ -898,10 +898,15 @@ document.addEventListener('alpine:init', () => {
       try { localStorage.setItem('openosint_settings', JSON.stringify(this.settings)); } catch {}
     },
 
+    apiUrl(path) {
+      const base = (window.OPENOSINT_CONFIG?.proxyBaseUrl || '').replace(/\/$/, '');
+      return base + path;
+    },
+
     // health / tools
     async fetchHealth() {
       try {
-        const r = await fetch('/api/health');
+        const r = await fetch(this.apiUrl('/api/health'));
         if (!r.ok) return;
         const d = await r.json();
         this.version          = d.version    || this.version;
@@ -917,14 +922,14 @@ document.addEventListener('alpine:init', () => {
 
     async fetchTools() {
       try {
-        const r = await fetch('/api/tools');
+        const r = await fetch(this.apiUrl('/api/tools'));
         if (r.ok) this.tools = await r.json();
       } catch {}
     },
 
     async fetchSponsors() {
       try {
-        const r = await fetch('/api/sponsors');
+        const r = await fetch(this.apiUrl('/api/sponsors'));
         if (!r.ok) return;
         const d = await r.json();
         if (d.status === 'ok') {
@@ -961,7 +966,7 @@ document.addEventListener('alpine:init', () => {
       // Only probe the server backend when client path isn't available.
       if (!useClient) {
         try {
-          const testResp = await fetch('/api/chat/test');
+          const testResp = await fetch(this.apiUrl('/api/chat/test'));
           if (testResp.ok) {
             const td = await testResp.json();
             this.aiBackend = td.backend || 'none';
@@ -1126,7 +1131,7 @@ document.addEventListener('alpine:init', () => {
 
       let fullText = '';
       try {
-        const resp = await fetch('/api/chat', {
+        const resp = await fetch(this.apiUrl('/api/chat'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
@@ -1327,7 +1332,7 @@ document.addEventListener('alpine:init', () => {
         this.setupOk = false; this.setupMsg = 'Enter at least one key.'; return;
       }
       try {
-        const r = await fetch('/api/setup', {
+        const r = await fetch(this.apiUrl('/api/setup'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(body),
@@ -1367,7 +1372,7 @@ document.addEventListener('alpine:init', () => {
       // CORS. The server has no such restriction. Blank fields fall back to the
       // server's configured OPENAI_BASE_URL / OPENAI_API_KEY.
       try {
-        const r = await fetch('/api/openai/test', {
+        const r = await fetch(this.apiUrl('/api/openai/test'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -1430,7 +1435,7 @@ document.addEventListener('alpine:init', () => {
         return;
       }
       try {
-        const r = await fetch('/api/setup', {
+        const r = await fetch(this.apiUrl('/api/setup'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(body),
